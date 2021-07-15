@@ -99,6 +99,16 @@ dist
 
 # DynamoDB Local files
 .dynamodb/
+.terraform/*.*
+# TernJS port f
 
-# TernJS port file
+# ile
 .tern-port
+
+
+
+
+# Terraform
+.terraform/*
+.terraform.tfs*
+
