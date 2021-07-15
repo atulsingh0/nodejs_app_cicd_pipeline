@@ -112,3 +112,7 @@ dist
 .terraform/*
 .terraform.tfs*
 
+.terraform.lock.hcl
+.terraform/
+terraform.tfstate
+.terraform.tfstate.backup
