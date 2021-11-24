@@ -1,17 +1,54 @@
 version: 2.1
 
 workflows:
-  build-test:
+  version: 2
+  
+  work-flow-01:
     jobs:
       - build
       - test:
           requires:
             - build
+      - deploy:
+          requires:
+            - build
+            - test
+      - job04:
+          requires:
+            - test
+            - build           
+  work-flow-02:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - job04
+      - job05
+      - job06:         
+          requires:
+            - build
+            - job05
+
+
+
+#########################################################
+
+
+executors:
+  node_docker:
+    docker:
+      - image: cimg/node:17.1.0
+    working_directory: ~/repo
+  base_docker:
+    docker:
+      - image: cimg/base:2021.11 
+    working_directory: ~/repo
+
 
 jobs:
   build:
-    docker:
-      - image: cimg/node:17.1.0
+    executor: node_docker
     steps:
       - checkout
       - run: 
@@ -26,15 +63,78 @@ jobs:
       - run:
           name: Running App
           command: cd app && echo "Done" #npm run start
-      - run: echo "Bye"
-      
+      - run:
+          name: creating build file"
+          command: cd .. && echo "file created by build job" > repo/build.log
+      - run: echo "Bye" && pwd && ls -l 
+      - persist_to_workspace:
+          root: ~/
+          paths: 
+            - repo
   test:
-    docker:
-      - image: cimg/node:17.1.0
+    executor: node_docker
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
+      #- checkout
       - run: 
           name: Checking Node Version
-          command: node --version
-    
-        
+          command: node --version  
+      - run:
+          name: list the files
+          command: pwd && ls -l ~/repo  && ls -l 
+      - run:
+          name: accessing log file
+          command: cat repo/build.log && echo "adding this line in test job" >>  repo/build.log 
+  deploy:
+    docker:
+      - image: cimg/base:2021.11
+    steps:
+      - run: |
+          echo "Testing if Deployment step is working"
+          echo "Testing 1 2 3..."
+          date
+          echo "Testing Completed"  
+  job04:
+    docker:
+      - image: cimg/base:2021.11
+    steps:
+      - run: 
+          name: "Triggeting Job04"
+          command: |
+            echo "Testing if Deployment step is working"
+            echo "Testing 1 2 3..."
+            date
+            echo "Testing Completed"             
+  job05:
+    docker:
+      - image: cimg/base:2021.11
+    working_directory: /tmp
+    steps:
+      - run:
+          #shell: /bin/sh
+          name: Creating Dummy Artifacts
+          command: |
+            echo "my artifact file" > /tmp/art-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/art-2;
+            ls -lrt /tmp
+      - store_artifacts:
+          path: /tmp/art-1
+          destination: artifact-file
+      - store_artifacts:
+          path: /tmp/artifacts
+  job06:
+    docker:
+      - image: cimg/base:2021.11  
+    steps:
+      - my-command-test
+      - run: echo "Bye bye Job06"      
+            
+
+commands:
+  my-command-test:
+    steps:
+      - run: echo "Hi"
+      - run: echo "1 2 ka 4"
+      - run: echo "Bye"
