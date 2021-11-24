@@ -11,7 +11,9 @@ workflows:
           requires:
             - build
             - test
-            
+      - job04:
+          requires:
+            - test            
             
 
 jobs:
