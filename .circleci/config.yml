@@ -7,6 +7,12 @@ workflows:
       - test:
           requires:
             - build
+      - deploy:
+          requires:
+            - build
+            - test
+            
+            
 
 jobs:
   build:
@@ -36,5 +42,15 @@ jobs:
       - run: 
           name: Checking Node Version
           command: node --version
+          
+  deploy:
+    docker:
+      - image: cimg/base:2021.11
+    steps:
+      - run: |
+          echo "Testing if Deployment step is working"
+          echo "Testing 1 2 3..."
+          date
+          echo "Testing Completed"
     
         
