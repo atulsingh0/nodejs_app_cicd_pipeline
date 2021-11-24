@@ -11,5 +11,15 @@ jobs:
       - image: cimg/node:17.1.0
     steps:
       - checkout
-      - run: node --version
-      - run: cd app && ls -l
+      - run: 
+          name: Checking Node Version
+          command: node --version
+      - run: 
+          name: Moving to App Directory
+          command: cd app && ls -l
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Running App
+          command: npm run start
