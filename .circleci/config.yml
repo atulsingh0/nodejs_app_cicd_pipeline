@@ -53,4 +53,16 @@ jobs:
           date
           echo "Testing Completed"
     
+    
+  job04:
+    docker:
+      - image: cimg/base:2021.11
+    steps:
+      - run: 
+          name: "Triggeting Job04"
+          command: |
+            echo "Testing if Deployment step is working"
+            echo "Testing 1 2 3..."
+            date
+            echo "Testing Completed"    
         
