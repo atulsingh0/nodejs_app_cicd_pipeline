@@ -25,7 +25,7 @@ jobs:
           command: pwd && cd app && npm install
       - run:
           name: Running App
-          command: cd app && npm run start
+          command: cd app && echo "Done" #npm run start
       - run: echo "Bye"
       
   test:
