@@ -4,6 +4,9 @@ workflows:
   build-test:
     jobs:
       - build
+      - test
+          requires:
+            - build
 
 jobs:
   build:
@@ -19,9 +22,19 @@ jobs:
           command: cd app && ls -l
       - run:
           name: Install Dependencies
-          command: npm install
+          command: pwd && cd app && npm install
       - run:
           name: Running App
-          command: npm run start
+          command: cd app && npm run start
       - run: echo "Bye"
+      
+  test:
+      docker:
+      - image: cimg/node:17.1.0
+    steps:
+      - checkout
+      - run: 
+          name: Checking Node Version
+          command: node --version
+    
         
