@@ -13,7 +13,8 @@ workflows:
             - test
       - job04:
           requires:
-            - test            
+            - test
+            - build
             
 
 jobs:
