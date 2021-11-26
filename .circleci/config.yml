@@ -84,6 +84,7 @@ jobs:
     working_directory: /tmp
     steps:
       - run:
+          shell: /bin/sh
           name: Creating Dummy Artifacts
           command: |
             echo "my artifact file" > /tmp/art-1;
