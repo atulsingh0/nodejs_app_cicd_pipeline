@@ -1,7 +1,9 @@
 version: 2.1
 
 workflows:
-  build-test:
+  version: 2
+  
+  work-flow-01:
     jobs:
       - build
       - test:
@@ -15,6 +17,7 @@ workflows:
           requires:
             - test
             - build
+            
   work-flow-02:
     jobs:
       - build
