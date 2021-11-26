@@ -81,6 +81,8 @@ jobs:
             echo "Testing Completed"    
             
   job05:
+    docker:
+      - image: cimg/base:2021.11
     working_directory: /tmp
     steps:
       - run:
