@@ -15,6 +15,14 @@ workflows:
           requires:
             - test
             - build
+  work-flow-02:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - job04
+      - job05
             
 
 jobs:
@@ -68,4 +76,20 @@ jobs:
             echo "Testing 1 2 3..."
             date
             echo "Testing Completed"    
-        
+            
+  job05:
+    working_directory: /tmp
+    steps:
+      - run: 
+          name: "Triggeting Job05"
+          command: |
+            echo "Running Job 05"
+            mkdir test
+            touch file.txt 
+            echo "Hi, How are you?" > /tmp/data
+            tree .
+            
+            
+      - save_artifacts:
+          path: /tmp/data
+            
