@@ -83,16 +83,16 @@ jobs:
   job05:
     working_directory: /tmp
     steps:
-      - run: 
-          name: "Triggeting Job05"
+      - run:
+          name: Creating Dummy Artifacts
           command: |
-            echo "Running Job 05"
-            mkdir test
-            touch file.txt 
-            echo "Hi, How are you?" > /tmp/data
-            tree .
-            
-            
-      - save_artifacts:
-          path: /tmp/data
+            echo "my artifact file" > /tmp/art-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/art-2;
+            tree /tmp
+      - store_artifacts:
+          path: /tmp/art-1
+          destination: artifact-file
+      - store_artifacts:
+          path: /tmp/artifacts
             
