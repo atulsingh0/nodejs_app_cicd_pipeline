@@ -16,8 +16,7 @@ workflows:
       - job04:
           requires:
             - test
-            - build
-            
+            - build           
   work-flow-02:
     jobs:
       - build
@@ -26,18 +25,7 @@ workflows:
             - build
       - job04
       - job05
-      - job06:
-          requires: 
-            - job04
-            - job05
-            
-
-commands:
-  my-command-test:
-    steps:
-      - run: echo "Hi"
-      - run: echo "1 2 ka 4"
-      - run: echo "Bye"
+      # - job06         
 
 
 jobs:
@@ -59,7 +47,6 @@ jobs:
           name: Running App
           command: cd app && echo "Done" #npm run start
       - run: echo "Bye"
-      
   test:
     docker:
       - image: cimg/node:17.1.0
@@ -67,8 +54,7 @@ jobs:
       - checkout
       - run: 
           name: Checking Node Version
-          command: node --version
-          
+          command: node --version        
   deploy:
     docker:
       - image: cimg/base:2021.11
@@ -77,9 +63,7 @@ jobs:
           echo "Testing if Deployment step is working"
           echo "Testing 1 2 3..."
           date
-          echo "Testing Completed"
-    
-    
+          echo "Testing Completed"  
   job04:
     docker:
       - image: cimg/base:2021.11
@@ -90,8 +74,7 @@ jobs:
             echo "Testing if Deployment step is working"
             echo "Testing 1 2 3..."
             date
-            echo "Testing Completed"    
-            
+            echo "Testing Completed"             
   job05:
     docker:
       - image: cimg/base:2021.11
@@ -110,9 +93,17 @@ jobs:
           destination: artifact-file
       - store_artifacts:
           path: /tmp/artifacts
-
-    job06:
-      steps:
-        - my-command-test
-        - run: echo "Bye bye Job06"      
+  # job06:
+  #   docker:
+  #     - image: cimg/base:2021.11  
+  #   steps:
+  #     #- my-command-test
+  #     - run: echo "Bye bye Job06"      
             
+
+# commands:
+#   my-command-test:
+#     steps:
+#       - run: echo "Hi"
+#       - run: echo "1 2 ka 4"
+#       - run: echo "Bye"
