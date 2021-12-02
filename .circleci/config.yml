@@ -48,6 +48,9 @@ jobs:
       - run:
           name: Running App
           command: cd app && echo "Done" #npm run start
+      - run:
+          name: creating build file"
+          command: cd .. && echo "file created by build job" > build.log
       - run: echo "Bye"
   test:
     docker:
@@ -56,7 +59,10 @@ jobs:
       - checkout
       - run: 
           name: Checking Node Version
-          command: node --version        
+          command: node --version  
+      - run:
+          name: accessing log file
+          command: cat build.log && echo "adding this line in test job" >>  build.log      
   deploy:
     docker:
       - image: cimg/base:2021.11
