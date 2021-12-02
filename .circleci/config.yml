@@ -26,7 +26,19 @@ workflows:
             - build
       - job04
       - job05
+      - job06:
+          requires: 
+            - job04
+            - job05
             
+
+commands:
+  my-command-test:
+    steps:
+      - run: echo "Hi"
+      - run: echo "1 2 ka 4"
+      - run: echo "Bye"
+
 
 jobs:
   build:
@@ -98,4 +110,9 @@ jobs:
           destination: artifact-file
       - store_artifacts:
           path: /tmp/artifacts
+
+    job06:
+      steps:
+        - my-command-test
+        - run: echo "Bye bye Job06"      
             
