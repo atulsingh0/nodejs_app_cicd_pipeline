@@ -82,7 +82,9 @@ jobs:
           command: node --version  
       - run:
           name: list the files
-          command: pwd && ls -l ~/repo  && ls -l 
+          command: |
+            cd && pwd && ls -l 
+            cd repo && pwd && ls -l  
       - run:
           name: accessing log file
           command: cat repo/build.log && echo "adding this line in test job" >>  repo/build.log 
