@@ -83,6 +83,7 @@ jobs:
       - run:
           name: list the files
           command: |
+            tree .
             cd && pwd && ls -l && ls -l p*
             cd repo && pwd && ls -l  
       - run:
