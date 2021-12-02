@@ -25,7 +25,7 @@ workflows:
             - build
       - job04
       - job05
-      # - job06         
+      - job06         
 
 
 jobs:
@@ -93,17 +93,17 @@ jobs:
           destination: artifact-file
       - store_artifacts:
           path: /tmp/artifacts
-  # job06:
-  #   docker:
-  #     - image: cimg/base:2021.11  
-  #   steps:
-  #     #- my-command-test
-  #     - run: echo "Bye bye Job06"      
+  job06:
+    docker:
+      - image: cimg/base:2021.11  
+    steps:
+      - my-command-test
+      - run: echo "Bye bye Job06"      
             
 
-# commands:
-#   my-command-test:
-#     steps:
-#       - run: echo "Hi"
-#       - run: echo "1 2 ka 4"
-#       - run: echo "Bye"
+commands:
+  my-command-test:
+    steps:
+      - run: echo "Hi"
+      - run: echo "1 2 ka 4"
+      - run: echo "Bye"
