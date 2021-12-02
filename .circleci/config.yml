@@ -65,23 +65,24 @@ jobs:
           command: cd app && echo "Done" #npm run start
       - run:
           name: creating build file"
-          command: cd .. && echo "file created by build job" > build.log
+          command: cd .. && echo "file created by build job" > repo/build.log
       - run: echo "Bye" && pwd && ls -l 
       - persist_to_workspace:
           root: ~/
           paths: 
             - repo
-            - repo/data
-            - .
   test:
     executor: node_docker
     steps:
       - attach_workspace:
-          at: ~/repo/data
-      - checkout
+          at: ~/repo
+      #- checkout
       - run: 
           name: Checking Node Version
           command: node --version  
+      - run:
+          name: list the files
+          command: ls -l ~/repo  && ls -l 
       - run:
           name: accessing log file
           command: cat build.log && echo "adding this line in test job" >>  build.log 
