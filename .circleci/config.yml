@@ -82,10 +82,10 @@ jobs:
           command: node --version  
       - run:
           name: list the files
-          command: ls -l ~/repo  && ls -l 
+          command: pwd && ls -l ~/repo  && ls -l 
       - run:
           name: accessing log file
-          command: cat build.log && echo "adding this line in test job" >>  build.log 
+          command: cat repo/build.log && echo "adding this line in test job" >>  repo/build.log 
   deploy:
     docker:
       - image: cimg/base:2021.11
