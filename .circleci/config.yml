@@ -25,8 +25,10 @@ workflows:
             - build
       - job04
       - job05
-      - job06         
-
+      - job06:         
+          requires:
+            - build
+            - job05
 
 jobs:
   build:
