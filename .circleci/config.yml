@@ -83,7 +83,7 @@ jobs:
       - run:
           name: list the files
           command: |
-            cd && pwd && ls -l 
+            cd && pwd && ls -l && ls -l p*
             cd repo && pwd && ls -l  
       - run:
           name: accessing log file
