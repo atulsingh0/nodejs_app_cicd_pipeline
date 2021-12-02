@@ -68,12 +68,16 @@ jobs:
           command: cd .. && echo "file created by build job" > build.log
       - run: echo "Bye" && pwd && ls -l 
       - persist_to_workspace:
-          root: ~/repo/workspace
+          root: ~/
+          paths: 
+            - repo
+            - repo/data
+            - .
   test:
     executor: node_docker
     steps:
       - attach_workspace:
-          at: ~/repo/workspace
+          at: ~/repo/data
       - checkout
       - run: 
           name: Checking Node Version
