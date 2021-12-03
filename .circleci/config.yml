@@ -24,7 +24,10 @@ workflows:
           requires:
             - build
       - job04
-      - job05
+      - job05:
+          requires:
+            - build
+            - job04
       - job06:         
           requires:
             - build
@@ -75,7 +78,7 @@ jobs:
     executor: node_docker
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/data
       #- checkout
       - run: 
           name: Checking Node Version
@@ -85,10 +88,14 @@ jobs:
           command: |
             find . 
             cd && pwd && ls -l
-            cd repo && pwd && ls -l  
+            cd data && pwd && ls -l  
       - run:
           name: accessing log file
-          command: cat repo/build.log && echo "adding this line in test job" >>  repo/build.log 
+          command: cat data/build.log && echo "adding this line in test job" >>  data/build.log 
+      - persist_to_workspace:
+          root: ~/
+          paths: 
+            - data          
   deploy:
     docker:
       - image: cimg/base:2021.11
