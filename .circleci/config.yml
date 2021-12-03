@@ -1,41 +1,7 @@
-version: 2.1
+version: '2.1'
 
-workflows:
-  version: 2
-  
-  work-flow-01:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - deploy:
-          requires:
-            - build
-            - test
-      - job04:
-          requires:
-            - test
-            - build           
-  work-flow-02:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - job04
-      - job05:
-          requires:
-            - build
-            - job04
-      - job06:         
-          requires:
-            - build
-            - job05
-
-
-
-#########################################################
+orbs:
+  slack: circleci/slack@4.5.0
 
 
 executors:
@@ -47,22 +13,33 @@ executors:
     docker:
       - image: cimg/base:2021.11 
     working_directory: ~/repo
+  ubuntu_vm:
+    machine:
+      image: default # ubuntu-2004:202111-01 # recommended linux image
+        
 
 
 jobs:
   build:
-    executor: node_docker
+    executor: node_docker  
+    resource_class: small
     steps:
       - checkout
       - run: 
           name: Checking Node Version
-          command: node --version
+          command: pwd && node --version
       - run: 
           name: Moving to App Directory
-          command: cd app && ls -l
+          command: cd app && ls -l && pwd
       - run:
           name: Install Dependencies
-          command: pwd && cd app && npm install
+          command: |
+            echo "As in every one workpath is reset to working_directory hence, we need to cd to app again"
+            pwd && cd app && npm install
+      - save_cache:
+          key: npm_cache-{{ .Branch }}-{{ checksum "app/package.json" }}
+          paths:
+            - node_modules      
       - run:
           name: Running App
           command: cd app && echo "Done" #npm run start
@@ -76,6 +53,7 @@ jobs:
             - repo
   test:
     executor: node_docker
+    resource_class: small
     steps:
       - attach_workspace:
           at: ~/data
@@ -86,19 +64,30 @@ jobs:
       - run:
           name: list the files
           command: |
-            find . 
+            find . -maxdepth 10 -type d 
             cd && pwd && ls -l
-            cd data && pwd && ls -l  
-      - run:
-          name: accessing log file
-          command: cat data/repo/build.log && echo "adding this line in test job" >>  data/repo/build.log 
+            cat data/repo/build.log
       - persist_to_workspace:
           root: ~/
           paths: 
-            - data          
+            - data    
+      - run:
+          name: accessing log file
+          command: |
+            pwd && ls -l 
+      - attach_workspace:
+          at: ~/dummy  
+      - run:
+          name: accessing log file from dummy
+          command: |
+            pwd && ls -l ~/dummy            
+            cat ~/dummy/repo/build.log
+            echo "adding this line in test job" >>  ~/dummy/repo/build.log                   
   deploy:
-    docker:
-      - image: cimg/base:2021.11
+    executor: ubuntu_vm
+    # machine:
+    #   image: default # ubuntu-2004:202010-01    
+    resource_class: medium
     steps:
       - run: |
           echo "Testing if Deployment step is working"
@@ -137,10 +126,29 @@ jobs:
   job06:
     docker:
       - image: cimg/base:2021.11  
+    resource_class: small  
     steps:
       - my-command-test
-      - run: echo "Bye bye Job06"      
-            
+      - run: echo "Bye bye Job06"
+      - checkout   
+      - restore_cache:
+          key: npm_cache-{{ .Branch }}-{{ checksum "app/package.json" }}   
+      - run: | 
+          ls -l
+          pwd
+          ls -l ~    
+  notify:
+    executor: base_docker
+    resource_class: small  
+    steps:
+      - run: echo "this is the notification from $CIRCLE_HOSTNAME"
+      - notification
+  custom_notify:
+    executor: base_docker
+    resource_class: small  
+    steps:
+      - run: echo "this is the notification from $CIRCLE_HOSTNAME"
+      - notification                  
 
 commands:
   my-command-test:
@@ -148,3 +156,66 @@ commands:
       - run: echo "Hi"
       - run: echo "1 2 ka 4"
       - run: echo "Bye"
+  notification:
+    steps:  
+      - run: echo "Testing Slack Notification"
+      - slack/notify:
+          event: always
+          mentions: '@atulsingh0'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification from $CIRCLE_HOSTNAME *",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+
+#########################################################
+
+
+workflows:
+  version: 2
+  work-flow-01:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - build
+            - test
+      - job04:
+          requires:
+            - test
+            - build           
+  work-flow-02:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - job04
+      - job05:
+          requires:
+            - build
+            - job04
+      - job06:         
+          requires:
+            - build
+            - job05
+      - notify:
+          context: 
+            - slack
+            - org-global
+          requires:
+            - job06          
