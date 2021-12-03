@@ -91,7 +91,7 @@ jobs:
             cd data && pwd && ls -l  
       - run:
           name: accessing log file
-          command: cat data/build.log && echo "adding this line in test job" >>  data/build.log 
+          command: cat data/repo/build.log && echo "adding this line in test job" >>  data/repo/build.log 
       - persist_to_workspace:
           root: ~/
           paths: 
